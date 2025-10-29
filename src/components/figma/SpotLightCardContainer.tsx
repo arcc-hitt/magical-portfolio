@@ -5,11 +5,11 @@ import SpotLightCard from './SpotLightCard'
 import SpotlightBeamOverlay from './SpotlightBeamOverlay'
 
 const cardConfigs = [
-    { width: 150, height: 200, left: '-40%', bottom: '35%', bg: "/card-back-1.png" },
-    { width: 200, height: 280, left: '-20%', bottom: '25%', bg: "/card-back-2.png" },
-    { width: 250, height: 350, left: '0%', bottom: '15%', bg: "/card-back-3.png" },
-    { width: 200, height: 280, left: '20%', bottom: '25%', bg: "/card-back-4.png" },
-    { width: 150, height: 200, left: '40%', bottom: '35%', bg: "/card-back-5.png" }
+    { width: 140, height: 200, left: '-40%', bottom: '35%', bg: "/card-back_1.png" },
+    { width: 170, height: 260, left: '-20%', bottom: '25%', bg: "/card-back_2.png" },
+    { width: 220, height: 330, left: '0%', bottom: '15%', bg: "/card-back_3.png" },
+    { width: 170, height: 260, left: '20%', bottom: '25%', bg: "/card-back_4.png" },
+    { width: 140, height: 200, left: '40%', bottom: '35%', bg: "/card-back_5.png" }
 ];
 
 const SpotLightCardContainer = () => {

@@ -1,6 +1,7 @@
 "use client"
 
 import React from 'react';
+import Image from 'next/image';
 
 interface SpotLightCardProps {
   index: number;
@@ -23,16 +24,29 @@ const SpotLightCard: React.FC<SpotLightCardProps> = ({ index, width, height, lef
         height: `${height}px`,
         left: `calc(50% + ${left})`,
         bottom: bottom,
-        backgroundImage: `url(${bg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
         transform: 'translateX(-50%)',
       }}
     >
-      {/* Dimmer overlay: blend with page background using gradient + multiply */}
+      {/* Image */}
+      <div className="relative w-full h-full z-0">
+        <Image
+          src={bg}
+          alt={`Card ${index + 1}`}
+          fill
+          className="object-fill"
+          draggable={false}
+          priority={false}
+        />
+      </div>
+
+      {/* Dimmer overlay */}
       <div
-        className="absolute inset-0 rounded-lg pointer-events-none transition-opacity duration-200 ease-out mix-blend-darken bg-gradient-to-b from-[rgba(42,13,83,0.45)] to-[rgba(5,0,0,0.79)]"
-        style={{ opacity: active ? 0 : 1 }}
+        className="absolute inset-0 z-10 rounded-lg pointer-events-none transition-opacity duration-200 ease-out mix-blend-multiply bg-gradient-to-b from-[rgba(41,0,118,0.71)] to-[rgba(0,0,0,0.95)]"
+        style={{
+          opacity: active ? 0 : 1,
+          width: `${width}px`,
+          height: `${height}px`,
+        }}
       />
     </div>
   );

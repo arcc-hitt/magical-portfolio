@@ -61,6 +61,18 @@ const SpotlightBeamOverlay: React.FC<SpotlightBeamOverlayProps> = ({
     return { cx: target.x, cy, rx: Math.min(rx, vw * 0.35), ry };
   }, [target, vw, vh, beamAngleDeg]);
 
+  // Rounded rectangle matching the card's bounds to make sure the card area is not tinted at all
+  const cardHole = React.useMemo(() => {
+    if (!target || vw === 0 || vh === 0) return { x: 0, y: 0, w: 0, h: 0, r: 0 };
+    const padding = 1.5; // small padding to ensure clean edge
+    const w = Math.min(target.w + padding * 2, vw);
+    const h = Math.min(target.h + padding * 2, vh);
+    const x = Math.max(0, target.x - w / 2);
+    const y = Math.max(0, target.y - h / 2);
+    const r = Math.min(12, w / 6, h / 6); // approximate Tailwind rounded-lg
+    return { x, y, w, h, r };
+  }, [target, vw, vh]);
+
   return (
     <motion.div
       aria-hidden
@@ -79,41 +91,59 @@ const SpotlightBeamOverlay: React.FC<SpotlightBeamOverlayProps> = ({
           <filter id="beamBlur" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
           </filter>
+          {/* Soft hotspot glow gradient (rendered under the card via mask) */}
           <radialGradient id="hotspot" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor={`rgba(${color},0.35)`} />
             <stop offset="100%" stopColor={`rgba(${color},0)`} />
           </radialGradient>
+          {/**
+           * Mask that cuts a clean hole where the spotlight hits the card.
+           * This ensures the spotlight color does NOT tint the card image inside the ellipse.
+           * White areas of the mask keep the overlay visible; black areas punch it out (transparent).
+           */}
+          <mask id="spotlightCutout">
+            <rect width={vw} height={vh} fill="white" />
+            {visible && target && (
+              // Punch out the entire card area so no tint or glow affects it directly
+              <rect x={cardHole.x} y={cardHole.y} width={cardHole.w} height={cardHole.h} rx={cardHole.r} ry={cardHole.r} fill="black" />
+            )}
+          </mask>
         </defs>
+        {/*
+          Overlay group uses the mask to avoid tinting the card area under the spotlight.
+          Everything inside the ellipse becomes transparent, revealing the original card colors.
+        */}
+        <g mask="url(#spotlightCutout)">
+          {/* Dim the surroundings slightly for effect */}
+          <rect width={vw} height={vh} fill="rgba(0,0,0,0.08)" />
 
-        {/* Dim the surroundings slightly for effect */}
-        <rect width={vw} height={vh} fill="rgba(0,0,0,0.08)" />
+          {/* Beam cone */}
+          {points && (
+            <motion.polygon
+              points={points}
+              fill="url(#beamGrad)"
+              filter="url(#beamBlur)"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: visible ? 1 : 0, points }}
+              transition={{ duration: 0.2 }}
+            />
+          )}
 
-        {/* Beam cone */}
-        {points && (
-          <motion.polygon
-            points={points}
-            fill="url(#beamGrad)"
-            filter="url(#beamBlur)"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: visible ? 1 : 0, points }}
-            transition={{ duration: 0.2 }}
-          />
-        )}
-
-        {/* Hotspot ellipse at target */}
-        {visible && target && (
-          <motion.ellipse
-            cx={ellipse.cx}
-            cy={ellipse.cy}
-            rx={ellipse.rx}
-            ry={ellipse.ry}
-            fill="url(#hotspot)"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          />
-        )}
+          {/* Hotspot ellipse at target base — masked to avoid coloring the card itself */}
+          {visible && target && (
+            <motion.ellipse
+              cx={ellipse.cx}
+              cy={ellipse.cy}
+              rx={ellipse.rx}
+              ry={ellipse.ry}
+              fill="url(#hotspot)"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            />
+          )}
+        </g>
       </svg>
     </motion.div>
   );
