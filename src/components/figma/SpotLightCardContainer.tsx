@@ -5,11 +5,11 @@ import SpotLightCard from './SpotLightCard'
 import SpotlightBeamOverlay from './SpotlightBeamOverlay'
 
 const cardConfigs = [
-    { width: 140, height: 200, left: '-40%', bottom: '35%', bg: "/card-back_1.png" },
-    { width: 170, height: 260, left: '-20%', bottom: '25%', bg: "/card-back_2.png" },
-    { width: 220, height: 330, left: '0%', bottom: '15%', bg: "/card-back_3.png" },
-    { width: 170, height: 260, left: '20%', bottom: '25%', bg: "/card-back_4.png" },
-    { width: 140, height: 200, left: '40%', bottom: '35%', bg: "/card-back_5.png" }
+    { width: 140, height: 200, left: '-40%', bottom: '35%', bg: "/card-back_1.png", front: "/card-front-1.png", label: "About" },
+    { width: 170, height: 260, left: '-20%', bottom: '25%', bg: "/card-back_2.png", front: "/card-front-2.png", label: "Projects" },
+    { width: 220, height: 330, left: '0%', bottom: '15%', bg: "/card-back_3.png", front: "/card-front-3.png", label: "Contact" },
+    { width: 170, height: 260, left: '20%', bottom: '25%', bg: "/card-back_4.png", front: "/card-front-4.png", label: "Skills" },
+    { width: 140, height: 200, left: '40%', bottom: '35%', bg: "/card-back_5.png", front: "/card-front-3.png", label: "Achievements" }
 ];
 
 const SpotLightCardContainer = () => {
@@ -58,6 +58,8 @@ const SpotLightCardContainer = () => {
                     left={card.left}
                     bottom={card.bottom}
                     bg={card.bg}
+                    frontBg={(card as any).front}
+                    label={(card as any).label}
                     active={hoveredIndex === index}
                 />
             ))}

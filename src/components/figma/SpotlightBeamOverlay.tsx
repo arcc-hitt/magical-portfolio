@@ -76,10 +76,11 @@ const SpotlightBeamOverlay: React.FC<SpotlightBeamOverlayProps> = ({
   return (
     <motion.div
       aria-hidden
-      className="fixed inset-0 z-20 pointer-events-none"
+      className="fixed inset-0 pointer-events-none"
       initial={{ opacity: 0 }}
       animate={{ opacity: visible && target ? 1 : 0 }}
       transition={{ duration: 0.2 }}
+      style={{ zIndex: 0 }}
     >
       <svg width="100%" height="100%" viewBox={`0 0 ${vw} ${vh}`}>
         <defs>
@@ -103,10 +104,6 @@ const SpotlightBeamOverlay: React.FC<SpotlightBeamOverlayProps> = ({
            */}
           <mask id="spotlightCutout">
             <rect width={vw} height={vh} fill="white" />
-            {visible && target && (
-              // Punch out the entire card area so no tint or glow affects it directly
-              <rect x={cardHole.x} y={cardHole.y} width={cardHole.w} height={cardHole.h} rx={cardHole.r} ry={cardHole.r} fill="black" />
-            )}
           </mask>
         </defs>
         {/*
